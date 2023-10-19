@@ -276,8 +276,100 @@ int llopen(LinkLayer connectionParameters)
     tries = connectionParameters.nRetransmissions;
     printf("New termios structure set\n");
 
-    
+    if (connectionParameters.role == LlTx)
+    {
+        alarmCounter = 0;
+        printf("Emissor\n");
+        printf("New termios structure set\n");
+        enum setState state;
+        unsigned char b;
+        unsigned char set[5];
+        set[0] = FLAG_SET;
+        set[1] = A;
+        set[2] = C_SET;
+        set[3] = BCC_SET;
+        set[4] = FLAG_SET;
 
+                while(alarmCounter < tries){
+            state = START;
+            int bytes;
+            if(setAlarm == FALSE){
+                bytes = write(fd, set, 5);
+                alarm(timeout); // 3s para escrever
+                setAlarm = TRUE;
+                if (bytes < 0){
+                    printf("Failed to send SET\n");
+                }
+                else{
+                    printf("Sending: %x,%x,%x,%x,%x\n", set[0], set[1], set[2], set[3], set[4]);
+
+                    printf("Sent SET FRAME\n");
+ 
+                }
+            }
+
+            while (state != STOP)
+            {
+                int b_rcv = read(fd, &b, 1);
+                if(b_rcv <= 0){
+                    break;
+                }
+                state = stateMachineUA(b, state);
+            }
+            
+           if (state == STOP){
+                break;
+            }
+                  
+        }
+
+        if (alarmCounter >= connectionParameters.nRetransmissions){
+            printf("Error UA\n");
+            return -1;
+        } 
+        else printf("Received UA successfully\n");
+    }
+
+    else if (connectionParameters.role == LlRx)
+    {
+        printf("I am the Receptor\n");
+
+        enum setState stateR = START;
+        unsigned char c;
+
+        while (stateR != STOP)
+        {
+            int b_rcv = read(fd, &c, 1);
+            if (b_rcv > 0)
+            {
+                printf("Receiving: %x\n", c);
+
+                stateR = stateMachineSET(c, stateR);
+            }
+        }
+
+        printf("Received SET FRAME\n");
+
+        unsigned char UA[5];
+        UA[0] = FLAG_SET;
+        UA[1] = A;
+        UA[2] = C_UA;
+        UA[3] = BCC_UA;
+        UA[4] = FLAG_SET;
+        int bytesReceptor = write(fd, UA, 5);
+        if (bytesReceptor < 0){
+            printf("Failed to send UA\n");
+        }
+        else {
+            printf("Sending: %x,%x,%x,%x,%x\n", UA[0], UA[1], UA[2], UA[3], UA[4]);
+            printf("Sent UA FRAME\n");
+        }
+
+    }
+    else {
+        printf("Unknown role!\n");
+        exit(1);
+    }
     return 1;
 }
 
@@ -286,10 +378,106 @@ int llopen(LinkLayer connectionParameters)
 ////////////////////////////////////////////////
 int llwrite(const unsigned char *buf, int bufSize)
 {
-    // TODO
+    alarmCounter = 0;
+
+    char bcc2 = 0x00;
+    for (int i = 0; i < bufSize; i++) {
+        bcc2 = bcc2 ^ buf[i];
+    }
+    unsigned char infoFrame[1000] = {0};
+
+    infoFrame[0] = FLAG_SET;
+    infoFrame[1] = A;
+    infoFrame[2] = (flag << 6); // control
+    infoFrame[3] = A ^ (flag << 6);
+
+    //byte stuffing
+    int index = 4;
+    for(int i = 0; i < bufSize; i++) {
+        if (buf[i] == 0x7E) {
+            infoFrame[index] = 0x7D;
+            index++;
+            infoFrame[index] = 0x5E;
+            index++;
+        }
+        else if (buf[i] == 0x7D) {
+            infoFrame[index] = 0x7D;
+            index++;
+            infoFrame[index] = 0x5D;
+            index++;
+        }
+        else {
+            infoFrame[index] = buf[i];
+            index++;
+        }
+    }
+
+    // Byte stuffing of the bcc2
+    if (bcc2 == 0x7E) {
+        infoFrame[index] = 0x7D;
+        index++;
+        infoFrame[index] = 0x5E;
+        index++;
+    }
+    else if (bcc2 == 0x7D) {
+        infoFrame[index] = 0x7D;
+        index++;
+        infoFrame[index] = 0x5D;
+        index++;
+    }
+    else {
+        infoFrame[index] = bcc2;
+        index++;
+    }
+    infoFrame[index] = FLAG_SET;
+    index++;
+
+
+    int STOP = FALSE;
+    unsigned char rcv[5];
+    alarmCounter = 0;
+    setAlarm = FALSE;
+
+    while(alarmCounter < tries){
+        if(setAlarm == FALSE){
+            write(fd, infoFrame, index);
+            //usleep(50*1000);
+            printf("\nInfo Frame sent Ns = %d\n", flag);
+            alarm(timeout);
+            setAlarm = TRUE;
+        }
+
+        int response = read(fd, rcv, 5);
+
+        if(response > 0){
+            if(rcv[2] != (!flag << 7 | 0x05)){
+                printf("\nREJ Received\n");
+                setAlarm = FALSE;
+                continue;
+            }
+            else if(rcv[3] != (rcv[1]^rcv[2])){
+                printf("\nRR not correct\n");
+                setAlarm = FALSE;
+                continue;
+            }
+            else{
+                printf("\nRR correctly received\n");
+                break;
+            }
+        }
+    }
+    if(alarmCounter >= tries){
+        printf("TIME-OUT\n");
+        return -1;
+    }
+    prevTries = flag;
+    if(flag) flag = 0;
+    else flag = 1;
 
     return 0;
+
 }
+
 
 ////////////////////////////////////////////////
 // LLREAD
