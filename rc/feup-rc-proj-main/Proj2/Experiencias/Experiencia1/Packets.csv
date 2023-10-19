@@ -1,0 +1,96 @@
+No.;Time;Source;Destination;Protocol;Length;Info
+1;0.000000000;Cisco_3a:f6:14;CDP/VTP/DTP/PAgP/UDLD;DTP;60;Dynamic Trunk Protocol
+2;0.000094844;Cisco_3a:f6:14;CDP/VTP/DTP/PAgP/UDLD;DTP;90;Dynamic Trunk Protocol
+3;0.025398132;Cisco_3a:f6:14;Spanning-tree-(for-bridges)_00;STP;60;Conf. Root = 32768/1/fc:fb:fb:3a:f6:00  Cost = 0  Port = 0x8014
+4;0.373002949;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+5;0.643481968;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.1? Tell 172.16.50.1
+6;1.394032439;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+7;1.663479203;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.1? Tell 172.16.50.1
+8;2.030578050;Cisco_3a:f6:14;Spanning-tree-(for-bridges)_00;STP;60;Conf. Root = 32768/1/fc:fb:fb:3a:f6:00  Cost = 0  Port = 0x8014
+9;2.418023130;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+10;2.481419879;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.254? Tell 172.16.50.1
+11;2.481539098;HewlettP_c3:78:70;HewlettP_61:2d:72;ARP;60;172.16.1.254 is at 00:21:5a:c3:78:70
+12;2.481546291;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=1/256, ttl=64 (reply in 13)
+13;2.481682063;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=1/256, ttl=64 (request in 12)
+14;3.481486018;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=2/512, ttl=64 (reply in 15)
+15;3.481621371;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=2/512, ttl=64 (request in 14)
+16;4.035135613;Cisco_3a:f6:14;Spanning-tree-(for-bridges)_00;STP;60;Conf. Root = 32768/1/fc:fb:fb:3a:f6:00  Cost = 0  Port = 0x8014
+17;4.511534393;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=3/768, ttl=64 (reply in 18)
+18;4.511668907;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=3/768, ttl=64 (request in 17)
+19;4.621401297;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.1? Tell 172.16.50.1
+20;5.378628595;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+21;5.535522639;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=4/1024, ttl=64 (reply in 22)
+22;5.535672518;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=4/1024, ttl=64 (request in 21)
+23;5.631482746;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.1? Tell 172.16.50.1
+24;6.040200922;Cisco_3a:f6:14;Spanning-tree-(for-bridges)_00;STP;60;Conf. Root = 32768/1/fc:fb:fb:3a:f6:00  Cost = 0  Port = 0x8014
+25;6.386047555;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+26;6.559522059;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=5/1280, ttl=64 (reply in 27)
+27;6.559654828;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=5/1280, ttl=64 (request in 26)
+28;6.655482446;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.1? Tell 172.16.50.1
+29;7.410048373;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+30;7.583523435;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=6/1536, ttl=64 (reply in 31)
+31;7.583650267;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=6/1536, ttl=64 (request in 30)
+32;7.666042518;HewlettP_c3:78:70;HewlettP_61:2d:72;ARP;60;Who has 172.16.50.1? Tell 172.16.1.254
+33;7.666049293;HewlettP_61:2d:72;HewlettP_c3:78:70;ARP;42;172.16.50.1 is at 00:21:5a:61:2d:72
+34;7.978071793;Cisco_3a:f6:14;CDP/VTP/DTP/PAgP/UDLD;CDP;451;Device ID: tux-sw5  Port ID: FastEthernet0/18  
+35;8.044849768;Cisco_3a:f6:14;Spanning-tree-(for-bridges)_00;STP;60;Conf. Root = 32768/1/fc:fb:fb:3a:f6:00  Cost = 0  Port = 0x8014
+36;8.584532642;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=7/1792, ttl=64 (reply in 37)
+37;8.584667017;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=7/1792, ttl=64 (request in 36)
+38;8.934516114;Cisco_3a:f6:14;Cisco_3a:f6:14;LOOP;60;Reply
+39;9.599529591;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=8/2048, ttl=64 (reply in 40)
+40;9.599694067;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=8/2048, ttl=64 (request in 39)
+41;9.623636218;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.1? Tell 172.16.50.1
+42;10.049816111;Cisco_3a:f6:14;Spanning-tree-(for-bridges)_00;STP;60;Conf. Root = 32768/1/fc:fb:fb:3a:f6:00  Cost = 0  Port = 0x8014
+43;10.383803555;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+44;10.623536764;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=9/2304, ttl=64 (reply in 45)
+45;10.623676516;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=9/2304, ttl=64 (request in 44)
+46;10.655517856;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.1? Tell 172.16.50.1
+47;11.410063389;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+48;11.647519283;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=10/2560, ttl=64 (reply in 49)
+49;11.647649188;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=10/2560, ttl=64 (request in 48)
+50;11.679519023;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.1? Tell 172.16.50.1
+51;12.054651433;Cisco_3a:f6:14;Spanning-tree-(for-bridges)_00;STP;60;Conf. Root = 32768/1/fc:fb:fb:3a:f6:00  Cost = 0  Port = 0x8014
+52;12.434063438;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+53;12.671527713;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=11/2816, ttl=64 (reply in 54)
+54;12.671661040;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=11/2816, ttl=64 (request in 53)
+55;13.672612418;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=12/3072, ttl=64 (reply in 56)
+56;13.672745606;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=12/3072, ttl=64 (request in 55)
+57;14.059413282;Cisco_3a:f6:14;Spanning-tree-(for-bridges)_00;STP;60;Conf. Root = 32768/1/fc:fb:fb:3a:f6:00  Cost = 0  Port = 0x8014
+58;14.628859299;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.1? Tell 172.16.50.1
+59;14.687524650;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=13/3328, ttl=64 (reply in 60)
+60;14.687677043;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=13/3328, ttl=64 (request in 59)
+61;15.388986756;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+62;15.647481569;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.1? Tell 172.16.50.1
+63;15.715518224;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=14/3584, ttl=64 (reply in 64)
+64;15.715651341;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=14/3584, ttl=64 (request in 63)
+65;16.064485156;Cisco_3a:f6:14;Spanning-tree-(for-bridges)_00;STP;60;Conf. Root = 32768/1/fc:fb:fb:3a:f6:00  Cost = 0  Port = 0x8014
+66;16.402077178;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+67;16.671490139;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.1? Tell 172.16.50.1
+68;16.735518113;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=15/3840, ttl=64 (reply in 69)
+69;16.735650742;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=15/3840, ttl=64 (request in 68)
+70;17.426079392;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+71;17.734668494;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=16/4096, ttl=64 (reply in 72)
+72;17.734802100;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=16/4096, ttl=64 (request in 71)
+73;18.069249239;Cisco_3a:f6:14;Spanning-tree-(for-bridges)_00;STP;60;Conf. Root = 32768/1/fc:fb:fb:3a:f6:00  Cost = 0  Port = 0x8014
+74;18.751536491;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=17/4352, ttl=64 (reply in 75)
+75;18.751670656;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=17/4352, ttl=64 (request in 74)
+76;18.941951487;Cisco_3a:f6:14;Cisco_3a:f6:14;LOOP;60;Reply
+77;19.634063801;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.1? Tell 172.16.50.1
+78;19.775523759;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=18/4608, ttl=64 (reply in 79)
+79;19.775674197;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=18/4608, ttl=64 (request in 78)
+80;20.074119202;Cisco_3a:f6:14;Spanning-tree-(for-bridges)_00;STP;60;Conf. Root = 32768/1/fc:fb:fb:3a:f6:00  Cost = 0  Port = 0x8014
+81;20.394172681;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+82;20.639487536;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.1? Tell 172.16.50.1
+83;20.799521643;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=19/4864, ttl=64 (reply in 84)
+84;20.799652107;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=19/4864, ttl=64 (request in 83)
+85;21.426091824;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+86;21.663489540;HewlettP_61:2d:72;Broadcast;ARP;42;Who has 172.16.1.1? Tell 172.16.50.1
+87;21.823530702;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=20/5120, ttl=64 (reply in 88)
+88;21.823659280;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=20/5120, ttl=64 (request in 87)
+89;22.078837260;Cisco_3a:f6:14;Spanning-tree-(for-bridges)_00;STP;60;Conf. Root = 32768/1/fc:fb:fb:3a:f6:00  Cost = 0  Port = 0x8014
+90;22.450090127;HewlettP_c3:78:70;Broadcast;ARP;60;Who has 172.16.1.1? Tell 172.16.1.254
+91;22.822760562;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=21/5376, ttl=64 (reply in 92)
+92;22.822890467;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=21/5376, ttl=64 (request in 91)
+93;23.839521912;172.16.50.1;172.16.1.254;ICMP;98;Echo (ping) request  id=0x0617, seq=22/5632, ttl=64 (reply in 94)
+94;23.839655378;172.16.1.254;172.16.50.1;ICMP;98;Echo (ping) reply    id=0x0617, seq=22/5632, ttl=64 (request in 93)
+95;24.083789845;Cisco_3a:f6:14;Spanning-tree-(for-bridges)_00;STP;60;Conf. Root = 32768/1/fc:fb:fb:3a:f6:00  Cost = 0  Port = 0x8014

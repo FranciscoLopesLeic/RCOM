@@ -1,0 +1,211 @@
+\section{Comandos de Configuração}
+
+
+
+
+\subsection{Tux52}
+\begin{lstlisting}[caption=tux52\_configuration, language=bash]
+#!/bin/bash
+ifconfig eth0 172.16.51.1/24
+route add -net 172.16.50.0/24 gw 172.16.51.253
+route add default gw 172.16.51.254
+\end{lstlisting}
+
+
+
+\subsection{Tux53}
+\begin{lstlisting}[caption=tux53\_configuration, language=bash]
+#!/bin/bash
+ifconfig eth0 172.16.50.1/24
+route add -net 172.16.51.0/24 gw 172.16.50.254
+route add default gw 172.16.50.254
+\end{lstlisting}
+
+
+
+
+\subsection{Tux54}
+\begin{lstlisting}[caption=tux54\_configuration, language=bash]
+#!/bin/bash
+ifconfig eth0 172.16.50.254/24
+ifconfig eth1 172.16.51.253/24
+route add default gw 172.16.51.254
+echo 1 > /proc/sys/net/ipv4/ip_forward
+echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
+\end{lstlisting}
+
+\subsection{Switch}
+
+\begin{lstlisting}[caption=switch\_configuration]
+configure terminal
+vlan 50
+end
+
+configure terminal
+vlan 51
+end
+
+#Adiciona porta 1 (Tux53)
+configure terminal
+interface fastethernet 0/1
+switchport mode access
+switchport access vlan 50
+end
+
+#Adiciona porta 2 (Tux54)
+configure terminal
+interface fastethernet 0/2
+switchport mode access
+switchport access vlan 50
+end
+
+#Adiciona porta 3 (Tux52)
+configure terminal
+interface fastethernet 0/3
+switchport mode access
+switchport access vlan 51
+end
+
+#Adicionar porta 4 (Tux54)
+configure terminal
+interface fastethernet 0/4
+switchport mode access
+switchport access vlan 51
+end
+
+#Adicionar porta 5 (Router)
+configure terminal
+interface fastethernet 0/5
+switchport mode access
+switchport access vlan 51
+end
+\end{lstlisting}
+
+
+
+\subsection{Router}
+
+\begin{lstlisting}[caption=router\_configuration]
+!
+! Last configuration change at 16:26:26 UTC Wed Jan 19 2022 by root
+!
+version 15.0
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname lab-tux5
+!
+boot-start-marker
+boot-end-marker
+!
+logging buffered 51200 warnings
+enable secret 5 $1$u53Q$vBawpP8.1YpCT6ypap1zX.
+!
+no aaa new-model
+!
+no ipv6 cef
+ip source-route
+ip cef
+!         
+!         
+!         
+!         
+no ip domain lookup
+multilink bundle-name authenticated
+!         
+!         
+!         
+!         
+license udi pid CISCO2901/K9 sn FHK134976HR
+!         
+!         
+archive   
+ log config
+  hidekeys
+username root privilege 15 secret 5 $1$8AFR$bNAYevxPFjXFExpnZI2fj.
+username cisco password 7 02050D480809
+!         
+!         
+!         
+!         
+!         
+!         
+interface GigabitEthernet0/0
+ description $ETH-LAN$$ETH-SW-LAUNCH$$INTF-INFO-FE 0$
+ ip address 172.16.51.254 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!         
+interface GigabitEthernet0/1
+ ip address 172.16.1.59 255.255.255.0
+ ip nat outside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+!         
+interface Serial0/0/0
+ no ip address
+ shutdown 
+ clock rate 2000000
+!         
+interface Serial0/0/1
+ no ip address
+ shutdown 
+ clock rate 2000000
+!         
+ip forward-protocol nd
+!         
+ip http server
+ip http access-class 23
+ip http authentication local
+ip http secure-server
+ip http timeout-policy idle 60 life 86400 requests 10000
+!         
+ip nat pool ovrld 172.16.1.59 172.16.1.59 prefix-length 24
+ip nat inside source list 1 pool ovrld overload
+ip route 0.0.0.0 0.0.0.0 172.16.1.254
+ip route 172.16.50.0 255.255.255.0 172.16.51.253
+!         
+access-list 1 permit 172.16.50.0 0.0.0.7
+access-list 1 permit 172.16.51.0 0.0.0.7
+access-list 23 permit 10.10.10.0 0.0.0.7
+access-list 23 permit 172.16.0.0 0.0.1.255
+!         
+!         
+!         
+control-plane
+!         
+!         
+line con 0
+ login local
+line aux 0
+line vty 0 4
+ access-class 23 in
+ privilege level 15
+ login local
+ transport input telnet ssh
+line vty 5 15
+ access-class 23 in
+ privilege level 15
+ login local
+ transport input telnet ssh
+!         
+scheduler allocate 20000 1000
+end 
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+

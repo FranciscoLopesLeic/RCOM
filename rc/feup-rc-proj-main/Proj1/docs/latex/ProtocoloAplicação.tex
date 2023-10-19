@@ -1,0 +1,92 @@
+\section{Protocolo de Aplicação}
+
+O Protocolo de Aplicação implementado tem como objetivos:
+\begin{enumerate}
+    \item Envio, receção e construção dos pacotes de controlo de início e fim de transmissão
+    \item Leitura/Escrita de dados de/para uma porta série utilizando o protocolo de ligação lógica
+    \item Construção/Interpretação de pacotes de dados com \textit{headers} válidos
+    \item Divisão de um ficheiro em fragmentos e posterior envio (transmissor)
+    \item Construção de um ficheiro através de dados recebidos (recetor)
+\end{enumerate}
+
+
+\subsection{Pacotes de Controlo}
+
+Os pacotes de controlo de transmissão são construídos pelo transmissor para denotar o inicio e fim de transmissão, bem como o envio de informação sobre os dados a serem enviados, tal como o tamanho do ficheiro e o seu nome. 
+
+\begin{lstlisting}[language=C, caption=Função que constrói o pacote de controlo (transmissor)]
+uint8_t* build_control_packet(size_t* control_packet_size, char* file_name) 
+\end{lstlisting}
+
+\begin{lstlisting}[language=C, caption=Função que interpreta o pacote de controlo recebido (recetor)]
+void parse_control_packet(uint8_t* packet) 
+\end{lstlisting}
+
+O tamanho do ficheiro, enviado no inicio da ligação no pacote de controlo, é usado para verificar, no fim da ligação, se o número de bytes recebidos corresponde ao esperado.
+
+\begin{lstlisting}[language=C, caption=Verificação do tamanho do ficheiro recebido (receiver)]
+    if (bytes_received != app_data.transfer_file_size) {
+        fprintf(stderr, "File size does not correspond to the expected\n");
+    }
+\end{lstlisting}
+
+\subsection{Leitura e Escrita de dados}
+
+A leitura e escrita de dados são ambos efetuados em loops nas funções principais do emissor e recetor, \textbf{transmitter} e \textbf{receiver} respetivamente.
+
+\begin{lstlisting}[language=C, caption=Envio de pacotes de dados]
+while (bytes_read < app_data.transfer_file_size) {
+    packet_no++;
+    bytes_written = read_data_packet(packet_no, data_packet, oldFileDescriptor, bytes_read);
+    bytes_read += bytes_written - 4;
+    if ((llwrite(app_data.file_descriptor, data_packet, bytes_written)) == -1) exit(1);
+    printf("Transmitter - packet %d sent\n", packet_no);
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[language=C, caption=Leitura dos pacotes de dados]
+    while (true) {
+        // READ
+        if (llread(app_data.file_descriptor, data_packet, MAX_PACKET_SIZE) == -1) exit(1);
+        if (data_packet[0] == 0x01) {
+            bytes_received += write_data_packet(data_packet, newFileDescriptor, &packet_no);
+            printf("Receiver - packet %d received\n", (int) data_packet[1]);
+        } else if (data_packet[0] == 0x02) {
+            parse_control_packet(data_packet);
+            if (file_exists(app_data.transfer_file_dir, app_data.transfer_file_name)) {
+                fprintf(stderr, "Error in application - receiver: file already exists\n");
+                exit(1);
+            }
+            newFileDescriptor = open_transfer_file();
+            fileOpen = true;
+
+        } else if (data_packet[0] == 0x03) {
+            // CLOSE
+            if ((llclose(app_data.file_descriptor)) != 0) exit(1);
+            printf("Receiver - connection cut\n");
+            break;
+        } else {
+            fprintf(stderr, "Error in application - receiver: C byte value invalid\n");
+            exit(1);
+        }
+    }
+\end{lstlisting}
+
+Nos pacotes de dados possuem numeração, que permitem avisar qualquer inconsitência nos pacotes recebidos. Esta verificação é feita na função \texttt{read\_data\_packet}. \textbf{Nota:} esta funcionalidade foi implementada posteriormente à apresentação.
+    
+\subsection{Leitura do ficheiro e construção dos pacotes}
+
+A leitura do ficheiro do \textbf{emissor} e subsequente construção do pacote de dados é feita incrementalmente, sendo a seguinte função chamada no loop de escrita referido anteriormente.
+
+\begin{lstlisting}[language=C, caption=Função que lê o ficheiro e constrói o pacote de dados]
+    size_t read_data_packet(int packetNo, uint8_t* data_packet, int fd, int bytes_read)
+\end{lstlisting}
+
+\subsection{Interpretação dos pacotes e escrita do ficheiro}
+
+O \textbf{recetor} executa a interpretação e verificação dos dados recebidos e a escrita dos mesmos num ficheiro numa mesma função, chamada iterativamente no loop acima descrito.
+
+\begin{lstlisting}[language=C, caption=Função que interpreta o pacote de dados recebido e escreve no ficheiro]
+    size_t write_data_packet(uint8_t* data_packet, int fd, int* packet_no)
+\end{lstlisting}

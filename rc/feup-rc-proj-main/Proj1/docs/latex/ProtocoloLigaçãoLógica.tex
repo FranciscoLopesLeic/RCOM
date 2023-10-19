@@ -1,0 +1,141 @@
+\section{Protocolo de Ligação Lógica}
+
+Os objetivos principais da camada de ligação de dados são:
+
+\begin{enumerate}
+    \item Redução e controlo dos erros de transmissão
+    \item Regulação do fluxo de dados
+    \item Disponibilização de uma interface para comunicação através da porta série à camada de aplicação
+\end{enumerate}
+
+
+
+\subsection{Leitura da Porta Série}
+
+Para leitura da porta série adaptada da máquina de estados fornecida, para suportar frames de dados, e tem como intuito ler as tramas recebidas na porta e verificar a sua validade. 
+
+A máquina de estados lê dados da porta série byte a byte. Depois da receção do BCC1, se não for detetada uma FLAG, sabemos que estamos perante uma frame de informação. Os dados são colocados num buffer e a leitura acaba quando é encontrada uma FLAG. O buffer contém os dados até à posição N - 1 pois o dado de posição N é o BCC2. Em seguida apresenta-se a sua implementação em pseudocódigo.  
+
+\begin{lstlisting}[caption=Pseudocódigo da StateMachine]
+    buffer <- Empty
+    While state != STOP:
+        byte_rcvd <- read_from_serial_port
+        if (state == START) then:
+            if byte_rcvd == FLAG then:
+                state <- FLAG_RCVD
+        if (state == FLAG_RCVD):
+            if (isA(byte_rcvd)) then:
+                state <- A_RCVD
+        if (state == A_RCVD) then:
+            if (isC(byte_rcvd)) then:
+                state <- A_RCVD
+            ElseIf (byte_rcvd == FLAG) then:
+                state = FLAG_RCVD
+            Else:
+                state = START
+        if (state == C_RCVD) then:
+            if (validBCC1()) then:
+                state = BCC_OK
+            ElseIf (byte_rcvd == FLAG) then:
+                state = FLAG_RCVD
+            Else:
+                state = START
+        if (state == BCC_OK) then:
+            if (byte_rcvd == FLAG_RCVD) then:
+                state <- STOP
+            Else:
+                Insert(buffer, byte_rcvd)
+                state = DATA
+        if (state == DATA) then:
+            if (byte_rcvd == FLAG) then:
+                state = STOP
+            Else:
+                Insert(buffer, byte_rcvd)
+\end{lstlisting}
+
+Quando a verificação do BCC1 falha não se envia qualquer resposta uma vez que é impossível determinar o tipo de frame recebido.
+
+Cada frame é lido num loop para o caso de haver erros na parte de informação e ser necessário receber outro frame. Se o BCC2 for válido e o frame corresponder ao número esperado um RR é enviado senão é enviado REJ e aguarda-se pelo novo frame.
+
+\begin{lstlisting}[language=C, caption=Código em C do loop responsével pela leitura da porta série, em llread]
+while(!valid_frame) {
+    new_frame = read_frame(fd, link_layer_data.frame, MAX_FRAME_SIZE);
+    frame_size = destuff(link_layer_data.frame, new_frame.packet_size, aux_buffer, MAX_PACKET_SIZE + 1);
+
+    if (frame_size == 0) {
+        fprintf(stderr, "Error in data_link - llread: destuffing packet unsuccessfull\n");
+        return -1;
+    }
+    uint8_t bcc2 = aux_buffer[--frame_size];
+
+    // Error
+    if (new_frame.frame_type != expected_package || !validBCC2(bcc2, aux_buffer, frame_size)) {
+        if (assemble_supervision_frame(expected_package ? REJ_1 : REJ_0, RECEIVER, response_frame) == -1) return -1;
+    } else {
+        memcpy(buffer, aux_buffer, frame_size);
+        if (assemble_supervision_frame(expected_package ? RR_0 : RR_1, RECEIVER, response_frame) == -1) return -1;
+        valid_frame = true;
+    }
+    if (write(fd, response_frame, SUPV_FRAME_SIZE) != 5) {
+        fprintf(stderr, "Error in data_link - llread: did not write response frame correctly");
+        return -1;
+    }
+}
+\end{lstlisting}
+
+\subsection{Escrita na Porta Série}
+
+Quando um buffer é escrito, o utilizador da função deve especificar uma resposta esperada pelo outro lado da porta série. Quando o buffer é enviado, é acionado um alarme. Se o alarme for chamado uma flag é ativada e retira-se um valor ao número de tentativas de leitura. Se o número de tentativas for esgotado, assume-se que a trama não foi enviada.
+\begin{lstlisting}[language=C, caption=Código em C da função responsável pela escrita na porta série]
+/* Writes a buffer to the serial port and awaits a certain response
+    fd -> Serial port file desciptor
+    buffer -> buffer to write
+    length -> length of the buffer to be written
+    expected_response -> expected response sent by the other end of the serial port
+*/
+int write_buffer(int fd, uint8_t* buffer, size_t length, FrameType expected_response) 
+\end{lstlisting}
+
+\subsection{Interface para uso na camada de aplicação}
+
+O programa foi desenhado de modo a manter independência entre a camada de aplicação e o protocolo de ligação de dados, de modo que este último é apenas visível à camada superior como 4 pontos de entrada.
+
+\subsubsection{Estabelecimento da ligação}
+
+Para o estabelecimento de ligação através de uma porta série, a função disponibilizada \textbf{llopen}. 
+
+\begin{itemize}
+    \item Emissor - configura-se a porta série, envia-se uma trama \textbf{SET} (pelo emissor) e aguarda-se uma trama \textbf{UA} que será enviada pelo recetor
+    \item Recetor - configura-se a porta série, aguarda-se a receção de uma trama \textbf{SET}; quando esta é recebida corretamente, envia-se uma trama \textbf{UA} de modo a marcar o estabelecimento de ligação
+\end{itemize}
+
+\begin{lstlisting}[language=C, caption=llopen header]
+int llopen(char* port, ConnectionType role)
+\end{lstlisting}
+
+\subsubsection{Término da conexão}
+
+Para o fecho da ligação, o protocolo de ligação de dados fornece a função \textbf{llclose}.
+
+\begin{itemize}
+    \item Emissor - envia-se uma trama \textbf{DISC}, aguarda-se por uma trama \textbf{DISC} e finalmente envia-se uma trama \textbf{UA}.
+    \item Recetor - aguarda-se uma trama \textbf{DISC}, envia-se uma trama \textbf{DISC} e finalmente aguarda-se uma trama \textbf{UA}.
+\end{itemize}
+
+
+\begin{lstlisting}[language=C, caption=llclose header]
+int llclose(int fd)
+\end{lstlisting}
+
+
+\subsubsection{Envio de dados}
+
+Para o envio de dados (pela parte do emissor), existe a função \textbf{llwrite}.
+
+Esta função apenas invoca a função \texttt{write\_buffer} descrita acima, além de controlar o número de sequência da trama.
+
+\subsubsection{Receção de dados}
+
+Para a receção de dados (pela parte do recetor), é providenciada a função \textbf{llread}.
+
+Esta função invoca a \texttt{state\_machine} e controla o processo de deteção de erros descritos acima.
