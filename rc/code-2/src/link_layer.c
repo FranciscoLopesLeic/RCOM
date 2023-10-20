@@ -379,7 +379,8 @@ int llopen(LinkLayer connectionParameters)
 int llwrite(const unsigned char *buf, int bufSize)
 {
     alarmCounter = 0;
-
+    (void)signal(SIGALRM, alarmHandler);
+    
     char bcc2 = 0x00;
     for (int i = 0; i < bufSize; i++) {
         bcc2 = bcc2 ^ buf[i];
