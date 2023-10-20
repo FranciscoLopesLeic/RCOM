@@ -5,6 +5,14 @@
 // MISC
 #define _POSIX_SOURCE 1 // POSIX compliant source
 
+int connected(const char *nrPort);
+
+// timeout
+void aHandler(int sign);
+
+unsigned char frameControl(int fd);
+
+int frameSupervision(int fd, unsigned char first, unsigned char second);
 ////////////////////////////////////////////////
 // LLOPEN
 ////////////////////////////////////////////////
