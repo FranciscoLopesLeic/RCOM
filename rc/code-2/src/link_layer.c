@@ -380,7 +380,7 @@ int llwrite(const unsigned char *buf, int bufSize)
 {
     alarmCounter = 0;
     (void)signal(SIGALRM, alarmHandler);
-    
+
     char bcc2 = 0x00;
     for (int i = 0; i < bufSize; i++) {
         bcc2 = bcc2 ^ buf[i];
@@ -638,8 +638,8 @@ int llread(unsigned char *packet)
         packet[i] = packetAux[i];
     }
     prevTries = flag;
-    if(infoFlag) infoFlag = 0;
-    else infoFlag = 1;
+    if(flag) flag = 0;
+    else flag = 1;
     return 0;
 }
 
@@ -657,19 +657,20 @@ int llclose(int showStatistics)
     sleep(1);
     printf("\n----LLCLOSE----\n");
     alarmCounter = 0;
+    signal(SIGALRM,handler);
     setAlarm = FALSE;
     printf("ROLE: %d\n", connectionParameters.role);
 
     if(connectionParameters.role == LlTx){
         
         unsigned char array[5];
-        array[0] = FLAG;
+        array[0] = FLAG_SET;
         array[1] = A;
         array[2] = C_DISC;
         array[3] = A^C_DISC;
-        array[4] = FLAG;
+        array[4] = FLAG_SET;
 
-        while(alarmCount < connectionParameters.nRetransmissions){
+        while(alarmCounter < connectionParameters.nRetransmissions){
 
             enum setState state = START;
             unsigned char b;
@@ -677,7 +678,7 @@ int llclose(int showStatistics)
             if(setAlarm == FALSE){
                 bytes = write(fd, array, 5);
                 alarm(timeout);
-                alarmEnabled = TRUE;
+                setAlarm = TRUE;
                 if (bytes < 0){
                     printf("Emissor: Failed to send DISC\n");
                 }
@@ -711,11 +712,11 @@ int llclose(int showStatistics)
 
         //mandar UA
         unsigned char UA[5];
-        UA[0] = FLAG;
+        UA[0] = FLAG_SET;
         UA[1] = A;
         UA[2] = C_UA;
         UA[3] = BCC_UA;
-        UA[4] = FLAG;
+        UA[4] = FLAG_SET;
         int bytesUA = write(fd, UA, 5);
         sleep(1);
         if (bytesUA < 0){
