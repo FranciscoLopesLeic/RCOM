@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "fcntl.h": "c",
-        "link_layer.h": "c",
-        "macros.h": "c",
-        "stat.h": "c"
-    }
-}
